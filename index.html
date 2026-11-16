@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Management Application</title>
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-sky-100">
+    <div class="p-5">
+        <h1 class="text-5xl font-bold text-center">Recipes</h1>
+        <div id="display" class="grid grid-cols-3 gap-6 p-5">
+            
+                
+          </div>       
+        <h1 class="text-5xl font-bold text-center">My Favourites</h1>    
+        <div id="display2" class="grid grid-cols-3 gap-6 p-5">
+           
+                   
+                </div>
+       
+       
+    </div>
+</body>
+<script>
+    let recipes=null
+    let FavRecipesList=JSON.parse(localStorage.getItem('data')) || []
+    const getData=async()=>{
+        try {
+        let apiResponse = await fetch('https://dummyjson.com/recipes')
+        apiResponse= await apiResponse.json()
+        recipes = apiResponse.recipes
+        console.log(recipes) 
+        let card=document.getElementById('display')
+        recipes.map((eachRecipe)=>(
+            card.innerHTML+=`<div class="p-3 rounded bg-white shadow-md">
+                <img src="${eachRecipe.image}" alt="${eachRecipe.name}" class="size-50 mx-auto">
+                   <div class="text-center">
+                    <h1 class="text-2xl font-bold">${eachRecipe.name}</h1>
+                    <h3 class="text-xl font-semibold">Ingredients</h3>
+                    <p>${eachRecipe.ingredients}</p>
+                    <h3 class="text-xl font-semibold">Instructions</h3>
+                    <p>${eachRecipe.instructions}</p>
+                    <p class="text-xl font-semibold">prepTimeMinutes:${eachRecipe.prepTimeMinutes}</p>
+                    <p class="text-xl font-semibold">servings:${eachRecipe.servings}</p>
+                    <p class="text-xl font-semibold">difficulty:${eachRecipe.difficulty}</p>
+                    <p class="text-xl font-semibold">cuisine:${eachRecipe.cuisine}</p>
+                    <p class="text-xl font-semibold">caloriesPerServing:${eachRecipe.caloriesPerServings}</p>
+                    <p class="text-xl font-semibold">rating:${eachRecipe.rating}</p>
+                    <p class="text-xl font-semibold">mealType:${eachRecipe.mealType}</p>
+                    <button onClick="onFavBtnClick('${eachRecipe.name}')" class="px-10 py-2 text-sm font-bold bg-pink-400 rounded text-white transition hover:bg-pink-600 active:scale-95 ">Add to Favourites</button>
+                   </div>
+                   <
+                </div>`
+        ))
+
+        } catch (error) {
+           console.log(error)
+           alert('api call failed') 
+        }
+    }
+    getData()
+
+    const onFavBtnClick=(name)=>{
+        let favRecipe=recipes.find((eachRecipe)=>eachRecipe.name==name) 
+        favRecipesList.unshift(favRecipe)
+        console.log(favRecipesList)
+        localStorage.setItem('data',JSON.stringify(favRecipesList))
+         displayFavRecipes()
+          alert('added to favourites')
+    }
+    
+    const displayFavRecipes =()=>{
+      favRecipesList = JSON.parse(localStorage.getItem('data')) || []
+        let displayFav = document.getElementById('display2')
+        displayFav.innerHTML=''
+       favRecipesList.map((eachRecipe)=>(
+            displayFav.innerHTML+=`<div class="p-3 rounded bg-white shadow-md">
+                <img src="${eachRecipe.image}" alt="${eachRecipe.name}" class="size-50 mx-auto">
+                   <div class="text-center">
+                    <h1 class="text-2xl font-bold">${eachRecipe.name}</h1>
+                    <h3 class="text-xl font-semibold">Ingredients</h3>
+                    <p>${eachRecipe.ingredients}</p>
+                    <h3 class="text-xl font-semibold">Instructions</h3>
+                    <p>${eachRecipe.instructions}</p>
+                    <p class="text-xl font-semibold">prepTimeMinutes:${eachRecipe.prepTimeMinutes}</p>
+                    <p class="text-xl font-semibold">servings:${eachRecipe.servings}</p>
+                    <p class="text-xl font-semibold">difficulty:${eachRecipe.difficulty}</p>
+                    <p class="text-xl font-semibold">cuisine:${eachRecipe.cuisine}</p>
+                    <p class="text-xl font-semibold">caloriesPerServing:${eachRecipe.caloriesPerServings}</p>
+                    <p class="text-xl font-semibold">rating:${eachRecipe.rating}</p>
+                    <p class="text-xl font-semibold">mealType:${eachRecipe.mealType}</p>
+                    <div class="flex gap-6">
+                        <button onClick="onFavBtnClick()" class="px-10 py-2 text-sm font-bold bg-amber-400 rounded text-white transition hover:bg-amber-600 active:scale-95 ">Edit</button>
+                        <button onClick="onDltBtnClick('${eachRecipe.name}')" class="px-10 py-2 text-sm font-bold bg-red-400 rounded text-white transition hover:bg-red-600 active:scale-95 ">Delete</button>
+                        </div>
+                   </div>`
+        ))
+    }
+    displayFavRecipes()
+
+    const onDltBtnClick =(name)=>{
+        let delFav =JSON.parse( localStorage.getItem('data'))
+        let filteredRecipes = delFav.filter((eachRecipe)=>eachRecipe.name!=name)
+        localStorage.setItem('data',JSON.stringify(filteredRecipes))
+        alert('deleted')
+        displayFavRecipes()
+        }
+
+  
+
+
+</script>
+</html>
